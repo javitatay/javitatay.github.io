@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Javier Tatay — Proyectos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #EEE9DA;
+      --surface:   #F7F4EE;
+      --border:    #BDCDD6;
+      --text:      #1c1a17;
+      --muted:     #6b6760;
+      --accent:    #1c1a17;
+      --accent2:   #4a4740;
+      --accent-bg: #e8e4d8;
+      --accent2-bg:#e4f0f5;
+      --radius:    14px;
+      --radius-sm: 8px;
+    }
+
+    html, body { height: 100%; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: clamp(28px, 4vh, 52px) 0 clamp(20px, 3vh, 40px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: stretch;
+      gap: 24px;
+    }
+
+    .avatar {
+      width: 132px;
+      height: 118px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.16);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 42%;
+      display: block;
+    }
+
+    .header-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .header-text h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.15;
+    }
+
+    .header-text .role {
+      margin-top: 6px;
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-weight: 400;
+      line-height: 1.5;
+      max-width: 42ch;
+    }
+
+    /* ── Bottom row: social/email links + buy-me-a-coffee ── */
+    .header-bottom {
+      margin-top: clamp(14px, 2vh, 22px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 12px 18px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .header-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .header-links a:hover { color: var(--accent); }
+
+    .header-links a svg { flex-shrink: 0; }
+
+    /* ── Buy me a coffee widget — scaled down to integrate ── */
+    .bmac-widget {
+      width: 132px;
+      height: 32px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .bmac-widget > * {
+      transform: scale(0.542);
+      transform-origin: top left;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 0.18s ease;
+    }
+    .bmac-widget:hover > * {
+      transform: scale(0.575);
+    }
+    .bmac-widget img,
+    .bmac-widget .bmc-btn {
+      box-shadow: none !important;
+      transition: box-shadow 0.18s ease !important;
+    }
+    .bmac-widget:hover img,
+    .bmac-widget:hover .bmc-btn {
+      box-shadow: 0 5px 16px rgba(0,0,0,0.18) !important;
+    }
+
+    /* ── Buy me a coffee button ── */
+    .bmac {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #1c1a17 !important;
+      text-decoration: none;
+      background: #FFDD00;
+      padding: 7px 14px;
+      border-radius: 100px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .bmac:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      color: #1c1a17 !important;
+    }
+
+    /* ── Section title ── */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Grid ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 1550px) {
+      .projects-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 1200px) {
+      .projects-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 540px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      header { padding: 32px 0 24px; }
+    }
+
+    /* ── Card preview ── */
+    .card-preview {
+      width: 100%;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .card-preview iframe {
+      width: 1280px;
+      height: 900px;
+      border: none;
+      transform-origin: top left;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+
+    .card-preview iframe.loaded {
+      opacity: 1;
+    }
+
+    .card-preview .preview-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--bg),
+        var(--bg) 6px,
+        var(--border) 6px,
+        var(--border) 7px
+      );
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: monospace;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card-preview .preview-placeholder.visible {
+      opacity: 1;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: clamp(16px, 2vh, 24px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      border-color: #93BFCF;
+      box-shadow: 0 4px 24px rgba(96,150,180,0.10);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon.indigo { background: var(--accent-bg); }
+    .card-icon.teal   { background: var(--accent2-bg); }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .card-desc {
+      font-size: 0.845rem;
+      color: var(--muted);
+      line-height: 1.65;
+      text-wrap: pretty;
+    }
+
+    /* ── Tags ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 100px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── Card footer links ── */
+    .card-links {
+      display: flex;
+      gap: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .card-link.primary { color: var(--accent); }
+    .card-link:hover { color: var(--accent); }
+    .card-link.primary:hover { color: #6b6760; }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: clamp(16px, 2vh, 32px) 0 clamp(12px, 1.5vh, 20px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: clamp(10px, 1.5vh, 20px) 0 clamp(14px, 2vh, 28px);
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body style="font-size: 8px">
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="avatar">
+        <img src="assets/perfil.jpg" alt="Javier Tatay">
+      </div>
+      <div class="header-text">
+        <h1>Javier Tatay</h1>
+        <p class="role">Técnico audiovisual y docente. Herramientas para producción en directo y recursos educativos para artes escénicas y audiovisuales.</p>
+      </div>
+    </div>
+    <div class="header-bottom">
+      <div class="header-links">
+          <a href="https://www.instagram.com/javitatay3/" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4.5"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            javitatay3
+          </a>
+          <a href="https://github.com/javitatay" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            github.com/javitatay
+          </a>
+          <a id="email1" href="#">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m2 7 10 7 10-7"/>
+            </svg>
+            <span id="email1-text"></span>
+          </a>
+          <a id="email2" href="#">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m2 7 10 7 10-7"/>
+            </svg>
+            <span id="email2-text"></span>
+          </a>
+      </div>
+      <span class="bmac-widget">
+        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="javitatay" data-color="#FFDD00" data-emoji="" data-font="Lato" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+      </span>
+    </div>
+  </header>
+
+  <!-- PROJECTS -->
+  <p class="section-label">Proyectos</p>
+
+  <div class="projects-grid">
+
+    <!-- AVV Lab -->
+    <a class="card" href="https://javitatay.github.io/AVV/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/AVV/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon teal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+        </svg>
+      </div>
+      <div><div class="card-title">AVV Lab</div></div>
+      <p class="card-desc">Plataforma educativa interactiva para el módulo de Animación Visual en Vivo del CFGM Video DJ. Suite de 6 herramientas HTML con simuladores, calculadoras, diagramas interactivos y quizzes. Sin servidor, sin dependencias.</p>
+      <div class="tags">
+        <span class="tag">Educación</span>
+        <span class="tag">VJing</span>
+        <span class="tag">HTML</span>
+        <span class="tag">FP</span>
+        <span class="tag">GVA</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/AVV','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+    <!-- VectorSlice -->
+    <a class="card" href="https://javitatay.github.io/VectorSlice/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/VectorSlice/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon indigo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4 L20 4 L20 20 L4 20 Z"/>
+          <circle cx="4" cy="4" r="1.6" fill="#1c1a17"/>
+          <circle cx="20" cy="4" r="1.6" fill="#1c1a17"/>
+          <circle cx="20" cy="20" r="1.6" fill="#1c1a17"/>
+          <circle cx="4" cy="20" r="1.6" fill="#1c1a17"/>
+          <line x1="4" y1="12" x2="20" y2="12" stroke-dasharray="2 2" opacity="0.5"/>
+        </svg>
+      </div>
+      <div><div class="card-title">VectorSlice</div></div>
+      <p class="card-desc">Convierte vectores de Illustrator en Slices de Resolume Arena. Sin redibujar punto por punto: exportas SVG desde Illustrator, lo arrastras al navegador y descargas el XML listo para importar en Advanced Output.</p>
+      <div class="tags">
+        <span class="tag">SVG</span>
+        <span class="tag">Resolume</span>
+        <span class="tag">Mapping</span>
+        <span class="tag">Illustrator</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/VectorSlice','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+    <!-- Tarimeo -->
+    <a class="card" href="https://javitatay.github.io/Tarimeo/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/Tarimeo/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon teal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+      </div>
+      <div><div class="card-title">Tarimeo</div></div>
+      <p class="card-desc">Diseña y organiza la distribución de tarimas y escenarios de tu festival. Coloca bloques modulares sobre el plano por días y escenarios, controla el stock disponible y exporta el plano para tu equipo. Web y app Android, funciona sin conexión.</p>
+      <div class="tags">
+        <span class="tag">Eventos</span>
+        <span class="tag">PWA</span>
+        <span class="tag">Android</span>
+        <span class="tag">Offline</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/Tarimeo','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+    <!-- RFTDT -->
+    <a class="card" href="https://javitatay.github.io/RFTDT/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/RFTDT/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon indigo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12h2m16 0h2M5.6 5.6l1.4 1.4m9.4 9.4 1.4 1.4M5.6 18.4l1.4-1.4m9.4-9.4 1.4-1.4"/>
+          <circle cx="12" cy="12" r="4"/>
+        </svg>
+      </div>
+      <div><div class="card-title">RF · TDT España</div></div>
+      <p class="card-desc">Herramienta de consulta de frecuencias UHF para técnicos de microfonía inalámbrica. Muestra canales TDT ocupados por demarcación, mapa interactivo con zoom gradual, verificador de conflictos y calculadora de intermodulación IM3.</p>
+      <div class="tags">
+        <span class="tag">RF</span>
+        <span class="tag">UHF</span>
+        <span class="tag">Microfonía</span>
+        <span class="tag">España</span>
+        <span class="tag">DVB-T</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/RFTDT','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+    <!-- QLab Scripts -->
+    <a class="card" href="https://javitatay.github.io/QLab-Scripts-Live-Events/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/QLab-Scripts-Live-Events/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon indigo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
+      <div><div class="card-title">QLab Scripts · Live Events</div></div>
+      <p class="card-desc">AppleScript cues para controlar PowerPoint, Chrome y Zoom desde QLab 5 sin salir del show. El script hace su trabajo y devuelve el foco a QLab — ninguno roba el control de tu Mac en medio de la producción.</p>
+      <div class="tags">
+        <span class="tag">AppleScript</span>
+        <span class="tag">QLab 5</span>
+        <span class="tag">macOS</span>
+        <span class="tag">MIT</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/QLab-Scripts-Live-Events','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+    <!-- Tatimer -->
+    <a class="card" href="https://javitatay.github.io/Tatimer/" target="_blank">
+      <div class="card-preview">
+        <iframe src="https://javitatay.github.io/Tatimer/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
+        <div class="preview-placeholder">preview</div>
+      </div>
+      <div class="card-icon teal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <polyline points="12 7 12 12 15.5 15.5"/>
+        </svg>
+      </div>
+      <div><div class="card-title">Tatimer</div></div>
+      <p class="card-desc">Temporizador standalone para monitor del ponente en eventos, conferencias y shows en vivo. Cuenta atrás, adelante y reloj. Mensajes al ponente, blackout, modo limpio y control por URL para integración con QLab.</p>
+      <div class="tags">
+        <span class="tag">HTML</span>
+        <span class="tag">Shows en vivo</span>
+        <span class="tag">QLab</span>
+        <span class="tag">Eventos</span>
+      </div>
+      <div class="card-links">
+        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
+        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/Tatimer','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+      </div>
+    </a>
+
+  </div>
+
+  <hr class="divider">
+
+  <footer>
+    <span>Javier Tatay Rubio · 2026</span>
+    <a href="https://github.com/javitatay" target="_blank">github.com/javitatay</a>
+  </footer>
+
+</div>
+
+<script>
+  // Keep Buy-me-a-coffee button at a tidy fixed scale
+  (function() {
+    function fitBmac() {
+      var widget = document.querySelector('.bmac-widget');
+      if (!widget) return;
+      var btn = widget.querySelector('.bmc-btn, a, img');
+      if (!btn) return false;
+      widget.style.height = btn.getBoundingClientRect().height * 0.542 + 'px';
+      return true;
+    }
+    var tries = 0;
+    var iv = setInterval(function() {
+      tries++;
+      if (fitBmac() || tries > 30) clearInterval(iv);
+    }, 200);
+    window.addEventListener('resize', fitBmac);
+  })();
+
+  (function() {
+    var e1 = ['javitatay','gmail.com'].join('@');
+    var e2 = ['j.tatayrubio','edu.gva.es'].join('@');
+    var a1 = document.getElementById('email1');
+    var a2 = document.getElementById('email2');
+    if (a1) { a1.href = 'mailto:' + e1; document.getElementById('email1-text').textContent = e1; }
+    if (a2) { a2.href = 'mailto:' + e2; document.getElementById('email2-text').textContent = e2; }
+  })();
+</script>
+
+<script>
+  function scalePreview(preview) {
+    const iframe = preview.querySelector('iframe');
+    const scale = preview.offsetWidth / 1280;
+    iframe.style.transform = `scale(${scale})`;
+    preview.style.height = Math.round(900 * scale) + 'px';
+  }
+
+  function initPreviews() {
+    document.querySelectorAll('.card-preview').forEach(preview => {
+      scalePreview(preview);
+      const iframe = preview.querySelector('iframe');
+      const placeholder = preview.querySelector('.preview-placeholder');
+
+      iframe.addEventListener('load', () => {
+        try {
+          // If we can access contentDocument it loaded fine
+          void iframe.contentDocument;
+          iframe.classList.add('loaded');
+        } catch(e) {
+          placeholder.classList.add('visible');
+        }
+      });
+
+      // Fallback: if iframe doesn't load in 5s show placeholder
+      setTimeout(() => {
+        if (!iframe.classList.contains('loaded')) {
+          placeholder.classList.add('visible');
+        }
+      }, 5000);
+    });
+  }
+
+  const ro = new ResizeObserver(() => {
+    document.querySelectorAll('.card-preview').forEach(scalePreview);
+  });
+  document.querySelectorAll('.card-preview').forEach(p => ro.observe(p));
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPreviews);
+  } else {
+    initPreviews();
+  }
+</script>
+</body>
+</html>
