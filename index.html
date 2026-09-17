@@ -196,37 +196,59 @@
       margin-bottom: 14px;
     }
 
-    /* ── Grid ── */
-    .projects-grid {
+    /* ── List layout ── */
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-row {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 16px;
-      align-items: start;
+      grid-template-columns: 260px 1fr auto;
+      align-items: center;
+      gap: 28px;
+      padding: 22px 12px;
+      border-top: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.18s ease;
+      border-radius: 10px;
     }
 
-    @media (max-width: 1650px) {
-      .projects-grid { grid-template-columns: repeat(4, 1fr); }
-    }
+    .projects-list .project-row:last-child { border-bottom: 1px solid var(--border); }
 
-    @media (max-width: 1200px) {
-      .projects-grid { grid-template-columns: repeat(3, 1fr); }
-    }
+    .project-row:hover { background: var(--surface); }
+
+    .project-row:hover .card-preview iframe { transform: scale(1.04); }
 
     @media (max-width: 900px) {
-      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+      .project-row { grid-template-columns: 180px 1fr; grid-template-areas: "preview main" "preview links"; gap: 18px 20px; }
+      .project-row .card-preview { grid-area: preview; }
+      .project-row .row-main { grid-area: main; }
+      .project-row .card-links { grid-area: links; }
     }
 
-    @media (max-width: 540px) {
-      .projects-grid { grid-template-columns: 1fr; }
+    @media (max-width: 620px) {
+      .project-row { grid-template-columns: 1fr; grid-template-areas: "preview" "main" "links"; }
       header { padding: 32px 0 24px; }
     }
 
-    /* ── Card preview ── */
+    .row-main { min-width: 0; }
+
+    .row-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    /* ── Preview ── */
     .card-preview {
       width: 100%;
-      height: 150px;
+      aspect-ratio: 16/10;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg);
       position: relative;
@@ -274,36 +296,17 @@
       opacity: 1;
     }
 
-    /* ── Card ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: clamp(16px, 2vh, 24px);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-      text-decoration: none;
-      color: inherit;
-      cursor: pointer;
-    }
-
-    .card:hover {
-      border-color: #93BFCF;
-      box-shadow: 0 4px 24px rgba(96,150,180,0.10);
-      transform: translateY(-2px);
-    }
-
+    /* ── Card content ── */
     .card-icon {
-      width: 36px;
-      height: 36px;
+      width: 28px;
+      height: 28px;
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
+    .card-icon svg { width: 15px; height: 15px; }
 
     .card-icon.indigo { background: var(--accent-bg); }
     .card-icon.teal   { background: var(--accent2-bg); }
@@ -319,8 +322,9 @@
     .card-desc {
       font-size: 0.845rem;
       color: var(--muted);
-      line-height: 1.65;
+      line-height: 1.6;
       text-wrap: pretty;
+      max-width: 62ch;
     }
 
     /* ── Tags ── */
@@ -342,13 +346,12 @@
       white-space: nowrap;
     }
 
-    /* ── Card footer links ── */
+    /* ── Row footer links ── */
     .card-links {
       display: flex;
-      gap: 14px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .card-link {
@@ -393,7 +396,7 @@
     footer a:hover { color: var(--accent); }
   </style>
 </head>
-<body style="font-size: 8px">
+<body>
 
 <div class="container">
 
@@ -448,28 +451,32 @@
   <!-- PROJECTS -->
   <p class="section-label">Proyectos</p>
 
-  <div class="projects-grid">
+  <div class="projects-list">
 
     <!-- AVV Lab -->
-    <a class="card" href="https://javitatay.github.io/AVV/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/AVV/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/AVV/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon teal">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon teal">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
           <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
         </svg>
       </div>
-      <div><div class="card-title">AVV Lab</div></div>
-      <p class="card-desc">Plataforma educativa interactiva para el módulo de Animación Visual en Vivo del CFGM Video DJ. Suite de 6 herramientas HTML con simuladores, calculadoras, diagramas interactivos y quizzes. Sin servidor, sin dependencias.</p>
-      <div class="tags">
+          <div class="card-title">AVV Lab</div>
+        </div>
+        <p class="card-desc">Plataforma educativa interactiva para el módulo de Animación Visual en Vivo del CFGM Video DJ. Suite de 6 herramientas HTML con simuladores, calculadoras, diagramas interactivos y quizzes. Sin servidor, sin dependencias.</p>
+        <div class="tags">
         <span class="tag">Educación</span>
         <span class="tag">VJing</span>
         <span class="tag">HTML</span>
         <span class="tag">FP</span>
         <span class="tag">GVA</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -478,12 +485,14 @@
     </a>
 
     <!-- VectorSlice -->
-    <a class="card" href="https://javitatay.github.io/VectorSlice/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/VectorSlice/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/VectorSlice/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon indigo">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon indigo">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 4 L20 4 L20 20 L4 20 Z"/>
           <circle cx="4" cy="4" r="1.6" fill="#1c1a17"/>
@@ -493,13 +502,15 @@
           <line x1="4" y1="12" x2="20" y2="12" stroke-dasharray="2 2" opacity="0.5"/>
         </svg>
       </div>
-      <div><div class="card-title">VectorSlice</div></div>
-      <p class="card-desc">Convierte vectores de Illustrator en Slices de Resolume Arena. Sin redibujar punto por punto: exportas SVG desde Illustrator, lo arrastras al navegador y descargas el XML listo para importar en Advanced Output.</p>
-      <div class="tags">
+          <div class="card-title">VectorSlice</div>
+        </div>
+        <p class="card-desc">Convierte vectores de Illustrator en Slices de Resolume Arena. Sin redibujar punto por punto: exportas SVG desde Illustrator, lo arrastras al navegador y descargas el XML listo para importar en Advanced Output.</p>
+        <div class="tags">
         <span class="tag">SVG</span>
         <span class="tag">Resolume</span>
         <span class="tag">Mapping</span>
         <span class="tag">Illustrator</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -508,12 +519,14 @@
     </a>
 
     <!-- Tarimeo -->
-    <a class="card" href="https://javitatay.github.io/Tarimeo/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/Tarimeo/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/Tarimeo/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon teal">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon teal">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
           <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -521,13 +534,15 @@
           <rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
       </div>
-      <div><div class="card-title">Tarimeo</div></div>
-      <p class="card-desc">Diseña y organiza la distribución de tarimas y escenarios de tu festival. Coloca bloques modulares sobre el plano por días y escenarios, controla el stock disponible y exporta el plano para tu equipo. Web y app Android, funciona sin conexión.</p>
-      <div class="tags">
+          <div class="card-title">Tarimeo</div>
+        </div>
+        <p class="card-desc">Diseña y organiza la distribución de tarimas y escenarios de tu festival. Coloca bloques modulares sobre el plano por días y escenarios, controla el stock disponible y exporta el plano para tu equipo. Web y app Android, funciona sin conexión.</p>
+        <div class="tags">
         <span class="tag">Eventos</span>
         <span class="tag">PWA</span>
         <span class="tag">Android</span>
         <span class="tag">Offline</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -536,25 +551,29 @@
     </a>
 
     <!-- MoodleExtractor -->
-    <a class="card" href="https://javitatay.github.io/MoodleExtractor/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/MoodleExtractor/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/MoodleExtractor/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon indigo">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon indigo">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 3v5a2 2 0 002 2h5"/>
           <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h9l7 7v9a2 2 0 01-2 2z"/>
           <path d="M8 13l2 2 2-2m0 5v-5"/>
         </svg>
       </div>
-      <div><div class="card-title">MoodleExtractor</div></div>
-      <p class="card-desc">Sube una copia de seguridad de un curso de Moodle (.mbz) y explora, previsualiza y descarga su contenido: páginas, archivos, cuestionarios y foros convertidos a PDF. Todo se procesa en el navegador, sin subir nada a ningún servidor.</p>
-      <div class="tags">
+          <div class="card-title">MoodleExtractor</div>
+        </div>
+        <p class="card-desc">Sube una copia de seguridad de un curso de Moodle (.mbz) y explora, previsualiza y descarga su contenido: páginas, archivos, cuestionarios y foros convertidos a PDF. Todo se procesa en el navegador, sin subir nada a ningún servidor.</p>
+        <div class="tags">
         <span class="tag">Moodle</span>
         <span class="tag">Educación</span>
         <span class="tag">PDF</span>
         <span class="tag">Offline</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -563,25 +582,29 @@
     </a>
 
     <!-- RFTDT -->
-    <a class="card" href="https://javitatay.github.io/RFTDT/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/RFTDT/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/RFTDT/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon indigo">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon indigo">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 12h2m16 0h2M5.6 5.6l1.4 1.4m9.4 9.4 1.4 1.4M5.6 18.4l1.4-1.4m9.4-9.4 1.4-1.4"/>
           <circle cx="12" cy="12" r="4"/>
         </svg>
       </div>
-      <div><div class="card-title">RF · TDT España</div></div>
-      <p class="card-desc">Herramienta de consulta de frecuencias UHF para técnicos de microfonía inalámbrica. Muestra canales TDT ocupados por demarcación, mapa interactivo con zoom gradual, verificador de conflictos y calculadora de intermodulación IM3.</p>
-      <div class="tags">
+          <div class="card-title">RF · TDT España</div>
+        </div>
+        <p class="card-desc">Herramienta de consulta de frecuencias UHF para técnicos de microfonía inalámbrica. Muestra canales TDT ocupados por demarcación, mapa interactivo con zoom gradual, verificador de conflictos y calculadora de intermodulación IM3.</p>
+        <div class="tags">
         <span class="tag">RF</span>
         <span class="tag">UHF</span>
         <span class="tag">Microfonía</span>
         <span class="tag">España</span>
         <span class="tag">DVB-T</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -590,24 +613,28 @@
     </a>
 
     <!-- QLab Scripts -->
-    <a class="card" href="https://javitatay.github.io/QLab-Scripts-Live-Events/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/QLab-Scripts-Live-Events/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/QLab-Scripts-Live-Events/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon indigo">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon indigo">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 18 22 12 16 6"/>
           <polyline points="8 6 2 12 8 18"/>
         </svg>
       </div>
-      <div><div class="card-title">QLab Scripts · Live Events</div></div>
-      <p class="card-desc">AppleScript cues para controlar PowerPoint, Chrome y Zoom desde QLab 5 sin salir del show. El script hace su trabajo y devuelve el foco a QLab — ninguno roba el control de tu Mac en medio de la producción.</p>
-      <div class="tags">
+          <div class="card-title">QLab Scripts · Live Events</div>
+        </div>
+        <p class="card-desc">AppleScript cues para controlar PowerPoint, Chrome y Zoom desde QLab 5 sin salir del show. El script hace su trabajo y devuelve el foco a QLab — ninguno roba el control de tu Mac en medio de la producción.</p>
+        <div class="tags">
         <span class="tag">AppleScript</span>
         <span class="tag">QLab 5</span>
         <span class="tag">macOS</span>
         <span class="tag">MIT</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
@@ -616,24 +643,28 @@
     </a>
 
     <!-- Tatimer -->
-    <a class="card" href="https://javitatay.github.io/Tatimer/" target="_blank">
+    <a class="project-row" href="https://javitatay.github.io/Tatimer/" target="_blank">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/Tatimer/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
       </div>
-      <div class="card-icon teal">
+      <div class="row-main">
+        <div class="row-head">
+          <div class="card-icon teal">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9"/>
           <polyline points="12 7 12 12 15.5 15.5"/>
         </svg>
       </div>
-      <div><div class="card-title">Tatimer</div></div>
-      <p class="card-desc">Temporizador standalone para monitor del ponente en eventos, conferencias y shows en vivo. Cuenta atrás, adelante y reloj. Mensajes al ponente, blackout, modo limpio y control por URL para integración con QLab.</p>
-      <div class="tags">
+          <div class="card-title">Tatimer</div>
+        </div>
+        <p class="card-desc">Temporizador standalone para monitor del ponente en eventos, conferencias y shows en vivo. Cuenta atrás, adelante y reloj. Mensajes al ponente, blackout, modo limpio y control por URL para integración con QLab.</p>
+        <div class="tags">
         <span class="tag">HTML</span>
         <span class="tag">Shows en vivo</span>
         <span class="tag">QLab</span>
         <span class="tag">Eventos</span>
+      </div>
       </div>
       <div class="card-links">
         <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
