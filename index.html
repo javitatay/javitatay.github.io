@@ -298,12 +298,6 @@
     }
 
     @media (max-width: 760px) {
-      .projects-accordion { flex-direction: column; overflow-y: auto; max-height: calc(100vh - 260px); }
-      .project-panel { flex: 0 0 58px; min-width: 0; }
-      .project-panel:is(:hover, :focus, :focus-within) { flex: 1 1 auto; }
-      .card-preview { flex: 0 0 58px; }
-      .project-panel:is(:hover, :focus, :focus-within) .card-preview { flex: 0 0 130px; }
-      .row-main, .project-panel:is(:hover, :focus, :focus-within) .row-main { padding: 10px 14px; }
       header { padding: 24px 0 18px; }
     }
 
@@ -516,6 +510,49 @@
     }
 
     footer a:hover { color: var(--accent); }
+    /* ── Mobile: the hover-to-reveal accordion doesn't translate to touch.
+       Below 760px, every card is a plain static block — preview on top,
+       everything else always visible underneath. No hover, no nested scroll. ── */
+    @media (max-width: 760px) {
+      .projects-accordion {
+        flex-direction: column;
+        flex: none;
+        min-height: 0;
+        gap: 14px;
+      }
+      .project-panel {
+        flex: none;
+        width: 100%;
+        cursor: default;
+      }
+      .project-panel:is(:hover, :focus, :focus-within) {
+        border-color: var(--border);
+        box-shadow: none;
+      }
+      .card-preview,
+      .project-panel:is(:hover, :focus, :focus-within) .card-preview {
+        flex: none;
+        height: 170px;
+      }
+      .row-main,
+      .project-panel:is(:hover, :focus, :focus-within) .row-main {
+        flex: none;
+        justify-content: flex-start;
+        padding: 14px 16px;
+        gap: 10px;
+      }
+      .card-desc,
+      .tags,
+      .card-links,
+      .project-panel:is(:hover, :focus, :focus-within) .card-desc,
+      .project-panel:is(:hover, :focus, :focus-within) .tags,
+      .project-panel:is(:hover, :focus, :focus-within) .card-links {
+        opacity: 1;
+        max-height: none;
+        pointer-events: auto;
+      }
+      .card-desc { -webkit-line-clamp: unset; }
+    }
   </style>
 </head>
 <body>
@@ -882,6 +919,16 @@
     iframe.src = iframe.dataset.src;
     scalePreview(panel.querySelector('.card-preview'));
   }
+
+  function syncPanelFocusability() {
+    const isMobile = window.matchMedia('(max-width: 760px)').matches;
+    document.querySelectorAll('.project-panel').forEach(panel => {
+      if (isMobile) panel.removeAttribute('tabindex');
+      else panel.setAttribute('tabindex', '0');
+    });
+  }
+  syncPanelFocusability();
+  window.matchMedia('(max-width: 760px)').addEventListener('change', syncPanelFocusability);
 
   function initPreviews() {
     const panels = document.querySelectorAll('.project-panel');
