@@ -180,11 +180,15 @@
       transition: transform 0.15s, box-shadow 0.15s;
     }
 
+    .bmac { transition: transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms ease; }
+
     .bmac:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 14px rgba(0,0,0,0.12);
       color: #1c1a17 !important;
     }
+
+    .bmac:active { transform: scale(0.97); }
 
     /* ── Section title ── */
     .section-label {
@@ -196,64 +200,95 @@
       margin-bottom: 14px;
     }
 
-    /* ── List layout ── */
-    .projects-list {
+    /* ── Accordion layout: small panels that expand on hover/focus ── */
+    .projects-accordion {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .project-panel {
+      flex: 1 1 0%;
+      min-width: 64px;
       display: flex;
       flex-direction: column;
-    }
-
-    .project-row {
-      display: grid;
-      grid-template-columns: 260px 1fr auto;
-      align-items: center;
-      gap: 28px;
-      padding: 22px 12px;
-      border-top: 1px solid var(--border);
-      text-decoration: none;
-      color: inherit;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      overflow: hidden;
       cursor: pointer;
-      transition: background 0.18s ease;
-      border-radius: 10px;
+      transition: flex 0.45s cubic-bezier(0.22,1,0.36,1), border-color 0.25s ease, box-shadow 0.25s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .projects-list .project-row:last-child { border-bottom: 1px solid var(--border); }
-
-    .project-row:hover { background: var(--surface); }
-
-    .project-row:hover .card-preview iframe { transform: scale(1.04); }
-
-    @media (max-width: 900px) {
-      .project-row { grid-template-columns: 180px 1fr; grid-template-areas: "preview main" "preview links"; gap: 18px 20px; }
-      .project-row .card-preview { grid-area: preview; }
-      .project-row .row-main { grid-area: main; }
-      .project-row .card-links { grid-area: links; }
+    .project-panel:is(:hover, :focus, :focus-within) {
+      flex: 8 1 0%;
+      border-color: var(--accent2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
-    @media (max-width: 620px) {
-      .project-row { grid-template-columns: 1fr; grid-template-areas: "preview" "main" "links"; }
-      header { padding: 32px 0 24px; }
+    .project-panel:focus-visible { outline: 2px solid #3d6b82; outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .project-panel { transition: none; }
+      .bmac:hover { transform: none; }
     }
 
-    .row-main { min-width: 0; }
+    .row-main {
+      min-width: 0;
+      overflow: hidden;
+      padding: 0 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      flex: 0 0 46px;
+    }
+
+    .project-panel:is(:hover, :focus, :focus-within) .row-main {
+      flex: 1;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 10px 18px 12px;
+    }
 
     .row-head {
       display: flex;
+      flex-direction: row;
       align-items: center;
       gap: 10px;
-      margin-bottom: 6px;
-    }
-
-    /* ── Preview ── */
-    .card-preview {
-      width: 100%;
-      aspect-ratio: 16/10;
-      overflow: hidden;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      position: relative;
+      min-width: 0;
       flex-shrink: 0;
     }
+
+    @media (max-width: 760px) {
+      .projects-accordion { flex-direction: column; overflow-y: auto; max-height: calc(100vh - 260px); }
+      .project-panel { flex: 0 0 58px; min-width: 0; }
+      .project-panel:is(:hover, :focus, :focus-within) { flex: 1 1 auto; }
+      .card-preview { flex: 0 0 58px; }
+      .project-panel:is(:hover, :focus, :focus-within) .card-preview { flex: 0 0 130px; }
+      .row-main, .project-panel:is(:hover, :focus, :focus-within) .row-main { padding: 10px 14px; }
+      header { padding: 24px 0 18px; }
+    }
+
+    /* ── Preview: big thumbnail, dominant when collapsed, shrinks to a strip when expanded ── */
+    .card-preview {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: relative;
+      transition: flex 0.4s ease;
+    }
+
+    .project-panel:is(:hover, :focus, :focus-within) .card-preview {
+      flex: 0 0 68%;
+    }
+
+    .card-preview iframe { transition: opacity 0.3s; }
 
     .card-preview iframe {
       width: 1280px;
@@ -298,34 +333,66 @@
 
     /* ── Card content ── */
     .card-icon {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
-    .card-icon svg { width: 15px; height: 15px; }
+    .card-icon svg { width: 13px; height: 13px; }
 
     .card-icon.indigo { background: var(--accent-bg); }
     .card-icon.teal   { background: var(--accent2-bg); }
 
     .card-title {
-      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      font-size: 0.86rem;
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--text);
       line-height: 1.25;
     }
 
-    .card-desc {
-      font-size: 0.845rem;
-      color: var(--muted);
-      line-height: 1.6;
-      text-wrap: pretty;
-      max-width: 62ch;
+    .project-panel:is(:hover, :focus, :focus-within) .card-title {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      font-size: 1rem;
     }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+      text-wrap: pretty;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-desc, .tags, .card-links {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s ease, max-height 0.35s ease;
+    }
+
+    .project-panel:is(:hover, :focus, :focus-within) .card-desc,
+    .project-panel:is(:hover, :focus, :focus-within) .tags,
+    .project-panel:is(:hover, :focus, :focus-within) .card-links {
+      opacity: 1;
+      max-height: 300px;
+      pointer-events: auto;
+    }
+
+    .project-panel, .row-main, .row-head { min-height: 0; }
 
     /* ── Tags ── */
     .tags {
@@ -349,9 +416,12 @@
     /* ── Row footer links ── */
     .card-links {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      flex-direction: row;
+      gap: 18px;
+      flex-wrap: wrap;
       flex-shrink: 0;
+      padding: 4px 20px 20px;
+      margin-top: auto;
     }
 
     .card-link {
@@ -362,8 +432,11 @@
       font-weight: 500;
       color: var(--muted);
       text-decoration: none;
-      transition: color 0.15s;
+      transition: color 0.15s, transform 120ms ease-out;
+      touch-action: manipulation;
     }
+
+    .card-link:active { transform: scale(0.96); }
 
     .card-link.primary { color: var(--accent); }
     .card-link:hover { color: var(--accent); }
@@ -404,7 +477,7 @@
   <header>
     <div class="header-inner">
       <div class="avatar">
-        <img src="assets/perfil.jpg" alt="Javier Tatay">
+        <img src="assets/perfil.jpg" alt="Javier Tatay" width="132" height="118">
       </div>
       <div class="header-text">
         <h1>Javier Tatay</h1>
@@ -414,7 +487,7 @@
     <div class="header-bottom">
       <div class="header-links">
           <a href="https://www.instagram.com/javitatay3/" target="_blank">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="2" y="2" width="20" height="20" rx="5"/>
               <circle cx="12" cy="12" r="4.5"/>
               <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
@@ -422,20 +495,20 @@
             javitatay3
           </a>
           <a href="https://github.com/javitatay" target="_blank">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
             </svg>
             github.com/javitatay
           </a>
           <a id="email1" href="#">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="m2 7 10 7 10-7"/>
             </svg>
             <span id="email1-text"></span>
           </a>
           <a id="email2" href="#">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="m2 7 10 7 10-7"/>
             </svg>
@@ -451,10 +524,10 @@
   <!-- PROJECTS -->
   <p class="section-label">Proyectos</p>
 
-  <div class="projects-list">
+  <div class="projects-accordion">
 
     <!-- AVV Lab -->
-    <a class="project-row" href="https://javitatay.github.io/AVV/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="AVV Lab – ver proyecto" data-href="https://javitatay.github.io/AVV/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/AVV/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -462,7 +535,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon teal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
           <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
         </svg>
@@ -479,13 +552,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/AVV','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/AVV" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- VectorSlice -->
-    <a class="project-row" href="https://javitatay.github.io/VectorSlice/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="VectorSlice – ver proyecto" data-href="https://javitatay.github.io/VectorSlice/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/VectorSlice/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -493,7 +566,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon indigo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M4 4 L20 4 L20 20 L4 20 Z"/>
           <circle cx="4" cy="4" r="1.6" fill="#1c1a17"/>
           <circle cx="20" cy="4" r="1.6" fill="#1c1a17"/>
@@ -513,13 +586,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/VectorSlice','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/VectorSlice" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- Tarimeo -->
-    <a class="project-row" href="https://javitatay.github.io/Tarimeo/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="Tarimeo – ver proyecto" data-href="https://javitatay.github.io/Tarimeo/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/Tarimeo/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -527,7 +600,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon teal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
           <rect x="14" y="3" width="7" height="7" rx="1"/>
           <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -545,13 +618,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/Tarimeo','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/Tarimeo" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- MoodleExtractor -->
-    <a class="project-row" href="https://javitatay.github.io/MoodleExtractor/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="MoodleExtractor – ver proyecto" data-href="https://javitatay.github.io/MoodleExtractor/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/MoodleExtractor/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -559,7 +632,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon indigo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M14 3v5a2 2 0 002 2h5"/>
           <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h9l7 7v9a2 2 0 01-2 2z"/>
           <path d="M8 13l2 2 2-2m0 5v-5"/>
@@ -576,13 +649,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/MoodleExtractor','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/MoodleExtractor" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- RFTDT -->
-    <a class="project-row" href="https://javitatay.github.io/RFTDT/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="RF · TDT España – ver proyecto" data-href="https://javitatay.github.io/RFTDT/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/RFTDT/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -590,7 +663,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon indigo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M2 12h2m16 0h2M5.6 5.6l1.4 1.4m9.4 9.4 1.4 1.4M5.6 18.4l1.4-1.4m9.4-9.4 1.4-1.4"/>
           <circle cx="12" cy="12" r="4"/>
         </svg>
@@ -607,13 +680,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/RFTDT','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/RFTDT" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- QLab Scripts -->
-    <a class="project-row" href="https://javitatay.github.io/QLab-Scripts-Live-Events/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="QLab Scripts · Live Events – ver proyecto" data-href="https://javitatay.github.io/QLab-Scripts-Live-Events/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/QLab-Scripts-Live-Events/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -621,7 +694,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon indigo">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="16 18 22 12 16 6"/>
           <polyline points="8 6 2 12 8 18"/>
         </svg>
@@ -637,13 +710,13 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/QLab-Scripts-Live-Events','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/QLab-Scripts-Live-Events" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
     <!-- Tatimer -->
-    <a class="project-row" href="https://javitatay.github.io/Tatimer/" target="_blank">
+    <div class="project-panel" role="group" tabindex="0" aria-label="Tatimer – ver proyecto" data-href="https://javitatay.github.io/Tatimer/">
       <div class="card-preview">
         <iframe src="https://javitatay.github.io/Tatimer/" scrolling="no" loading="lazy" tabindex="-1"></iframe>
         <div class="preview-placeholder">preview</div>
@@ -651,7 +724,7 @@
       <div class="row-main">
         <div class="row-head">
           <div class="card-icon teal">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1c1a17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="9"/>
           <polyline points="12 7 12 12 15.5 15.5"/>
         </svg>
@@ -667,10 +740,10 @@
       </div>
       </div>
       <div class="card-links">
-        <span class="card-link primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</span>
-        <span class="card-link" onclick="event.preventDefault(); window.open('https://github.com/javitatay/Tatimer','_blank')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</span>
+        <a class="card-link primary" href="#" data-role="primary" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Ver proyecto</a>
+        <a class="card-link" href="https://github.com/javitatay/Tatimer" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>GitHub</a>
       </div>
-    </a>
+    </div>
 
   </div>
 
@@ -715,9 +788,13 @@
 <script>
   function scalePreview(preview) {
     const iframe = preview.querySelector('iframe');
-    const scale = preview.offsetWidth / 1280;
+    const w = preview.offsetWidth, h = preview.offsetHeight;
+    if (!w || !h) return;
+    const scale = Math.max(w / 1280, h / 900);
+    const scaledW = 1280 * scale;
     iframe.style.transform = `scale(${scale})`;
-    preview.style.height = Math.round(900 * scale) + 'px';
+    iframe.style.left = Math.round((w - scaledW) / 2) + 'px';
+    iframe.style.top = '0px';
   }
 
   function initPreviews() {
@@ -755,6 +832,13 @@
   } else {
     initPreviews();
   }
+</script>
+
+<script>
+  document.querySelectorAll('.project-panel').forEach(panel => {
+    const primary = panel.querySelector('.card-link.primary');
+    if (primary) primary.href = panel.dataset.href;
+  });
 </script>
 </body>
 </html>
