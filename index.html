@@ -335,6 +335,8 @@
       left: 0;
       transition: opacity 0.3s;
       opacity: 0;
+      will-change: transform;
+      backface-visibility: hidden;
     }
 
     .card-preview iframe.loaded {
@@ -359,11 +361,22 @@
       font-family: monospace;
       opacity: 1;
       transition: opacity 0.3s;
+      animation: preview-pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes preview-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.72; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card-preview .preview-placeholder { animation: none; }
     }
 
     .card-preview .preview-placeholder.hidden {
       opacity: 0;
       pointer-events: none;
+      animation: none;
     }
 
     /* ── Card content ── */
@@ -821,13 +834,26 @@
 </script>
 
 <script>
+  // Prefer `zoom` over `transform: scale()`: zoom makes the browser actually
+  // re-render text/UI at the target size (crisp), whereas transform just
+  // resamples an already-rasterized layer (can look pixelated on small text).
+  const ZOOM_SUPPORTED = (function () {
+    try { return CSS.supports('zoom', '1'); } catch (e) { return false; }
+  })();
+
   function scalePreview(preview) {
     const iframe = preview.querySelector('iframe');
     const w = preview.offsetWidth, h = preview.offsetHeight;
     if (!w || !h) return;
     const scale = Math.max(w / 1280, h / 900);
     const scaledW = 1280 * scale;
-    iframe.style.transform = `scale(${scale})`;
+    if (ZOOM_SUPPORTED) {
+      iframe.style.transform = 'none';
+      iframe.style.zoom = scale;
+    } else {
+      iframe.style.zoom = '';
+      iframe.style.transform = `scale(${scale})`;
+    }
     iframe.style.left = Math.round((w - scaledW) / 2) + 'px';
     iframe.style.top = '0px';
   }
@@ -857,11 +883,25 @@
   }
 
   function initPreviews() {
-    document.querySelectorAll('.project-panel').forEach(panel => {
+    const panels = document.querySelectorAll('.project-panel');
+    panels.forEach(panel => {
       const trigger = () => loadPreview(panel);
       panel.addEventListener('pointerenter', trigger, { once: true });
       panel.addEventListener('focusin', trigger, { once: true });
     });
+
+    // Auto-load shortly after the page settles, staggered so they don't
+    // all compete for bandwidth/CPU at once.
+    const startAutoLoad = () => {
+      panels.forEach((panel, i) => {
+        setTimeout(() => loadPreview(panel), i * 180);
+      });
+    };
+    if (document.readyState === 'complete') {
+      setTimeout(startAutoLoad, 150);
+    } else {
+      window.addEventListener('load', () => setTimeout(startAutoLoad, 150));
+    }
   }
 
   const ro = new ResizeObserver(() => {
