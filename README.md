@@ -16,6 +16,7 @@ Trabajo en producción técnica de espectáculos en vivo — sonido, iluminació
 | [**Tatimer**](https://github.com/javitatay/Tatimer) | Timer minimalista para eventos en directo | [Abrir](https://javitatay.github.io/Tatimer/) |
 | [**Tarimeo**](https://github.com/javitatay/Tarimeo) | App de gestión de tarimas en espectáculos | [Abrir](https://javitatay.github.io/Tarimeo/) |
 | [**QLab Scripts**](https://github.com/javitatay/QLab-Scripts-Live-Events) | Scripts AppleScript para integrar apps externas en shows desde QLab 5 | [Abrir](https://javitatay.github.io/QLab-Scripts-Live-Events/) |
+| [**MoodleExtractor**](https://github.com/javitatay/MoodleExtractor) | Explora, previsualiza y descarga el contenido de una copia de seguridad de Moodle (.mbz): páginas, archivos, cuestionarios y foros en PDF. Todo en el navegador, sin subir nada a ningún servidor | [Abrir](https://javitatay.github.io/MoodleExtractor/) |
 
 ---
 
